@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Éternel Archive — Wedding Gallery Album</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..700;1,400..700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config={darkMode:"class",theme:{extend:{colors:{"on-primary":"#ffffff","secondary-container":"#ecddd6","primary-fixed-dim":"#e0c298","surface-dim":"#ddd9d7","background":"#fdf8f6","on-secondary-container":"#6b605b","surface-container-highest":"#e6e2df","surface-container-high":"#ece7e5","error":"#ba1a1a","outline":"#7f766a","inverse-surface":"#31302f","inverse-on-surface":"#f4f0ee","tertiary":"#735c00","surface-variant":"#e6e2df","outline-variant":"#d1c5b8","tertiary-container":"#cda931","on-surface":"#1c1b1a","secondary":"#675c57","surface":"#fdf8f6","primary":"#725b38","on-primary-container":"#513d1d","on-surface-variant":"#4d463c","surface-container-lowest":"#ffffff","surface-container-low":"#f7f3f0","primary-fixed":"#fedeb2","tertiary-fixed":"#ffe088","surface-container":"#f1edeb","primary-container":"#c5a880"},
+borderRadius:{DEFAULT:"0.125rem",lg:"0.25rem",xl:"0.5rem",full:"0.75rem"},
+spacing:{"space-xl":"2.5rem","gutter-sm":"0.75rem","space-md":"1rem","margin-desktop":"4rem","space-sm":"0.5rem","space-2xl":"4rem","gutter-lg":"2.5rem","gutter":"1.5rem","margin-mobile":"1.25rem","margin":"2rem","space-xs":"0.25rem","space-lg":"1.5rem"},
+fontFamily:{serif:["Playfair Display","serif"],sans:["Plus Jakarta Sans","sans-serif"]}}}};
+</script>
+<style>
+  html{scroll-behavior:smooth}
+  body{font-family:'Plus Jakarta Sans',sans-serif;overscroll-behavior:none}
+  .font-display{font-family:'Playfair Display',serif}
+  .material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 300,'GRAD' 0,'opsz' 24}
+  .material-symbols-outlined.fill{font-variation-settings:'FILL' 1,'wght' 300,'GRAD' 0,'opsz' 24}
+  .label-caps{font-size:11px;line-height:16px;letter-spacing:.12em;font-weight:600;text-transform:uppercase}
+  .scrollbar-none::-webkit-scrollbar{display:none}.scrollbar-none{scrollbar-width:none}
+  .reveal{opacity:0;transform:translateY(28px);transition:opacity .9s ease,transform .9s ease}
+  .reveal.in{opacity:1;transform:none}
+  @media (prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none}}
+  .page-enter{animation:fade .5s ease}
+  @keyframes fade{from{opacity:0}to{opacity:1}}
+</style>
+</head>
+<body class="bg-surface text-on-surface antialiased selection:bg-secondary-container">
+  <div id="app"></div>
+  <div id="modal-root"></div>
+  <div id="toast-root" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-[70] flex flex-col gap-2 items-center pointer-events-none"></div>
+  <script src="js/api.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

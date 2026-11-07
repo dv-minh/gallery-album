@@ -1,0 +1,2 @@
+# Sao chép thành .dev.vars (không commit) để chạy wrangler dev cục bộ
+ADMIN_CODE=886924
