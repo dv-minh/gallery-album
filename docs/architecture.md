@@ -2,7 +2,7 @@
 
 ## 1. Mục tiêu và ràng buộc
 - Web cá nhân, 1 chủ sở hữu, lượng truy cập thấp. Chi phí **0 đồng**.
-- Đẹp, đầy đủ tính năng: trưng bày, lightbox, trình chiếu, yêu thích, tải ảnh/ZIP, quản lý album, upload.
+- Đẹp, đầy đủ tính năng: trưng bày, lightbox, tải ảnh, quản lý album, upload.
 - Đơn giản để vận hành: **một repo, một lần deploy**.
 
 ## 2. Sơ đồ
@@ -23,7 +23,6 @@ Cùng origin ⇒ không CORS, không Pages riêng, không presigned URL.
 
 Hệ quả thiết kế:
 - Không xử lý ảnh ở server → **client sinh thumb/medium bằng canvas**.
-- Không nén ZIP ở server → **client dùng `fflate`**.
 - Mỗi ảnh qua Worker là 1 request → cache dài + immutable, lưới dùng thumb nhỏ.
 
 ## 4. Luồng chính

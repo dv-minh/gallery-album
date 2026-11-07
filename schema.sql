@@ -17,7 +17,6 @@ CREATE TABLE IF NOT EXISTS photos (
   mime       TEXT NOT NULL,
   story      TEXT NOT NULL DEFAULT '',
   meta       TEXT NOT NULL DEFAULT '',
-  favorite   INTEGER NOT NULL DEFAULT 0,
   position   INTEGER NOT NULL,            -- tăng dần toàn cục theo thứ tự tạo
   variants   INTEGER NOT NULL DEFAULT 0,  -- bitmask: thumb=1, medium=2, original=4
   status     TEXT NOT NULL DEFAULT 'pending', -- 'ready' khi variants = 7

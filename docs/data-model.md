@@ -18,7 +18,6 @@ photos(
   mime TEXT NOT NULL,
   story TEXT NOT NULL DEFAULT '',
   meta TEXT NOT NULL DEFAULT '',-- thông số máy ảnh/ống kính (hiển thị trong lightbox)
-  favorite INTEGER NOT NULL DEFAULT 0,
   position INTEGER NOT NULL,    -- tăng dần TOÀN CỤC theo thứ tự tạo (dùng làm cursor phân trang)
   variants INTEGER NOT NULL DEFAULT 0, -- bitmask: thumb=1, medium=2, original=4
   status TEXT NOT NULL DEFAULT 'pending', -- pending → ready (khi variants = 7)

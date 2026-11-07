@@ -3,8 +3,6 @@
  * Hợp đồng endpoint: docs/api.md.
  */
 import type { Album, CreatePhotoInput, Photo, PhotoPage, Storage, Variant } from '../../shared/types';
-import { USE_MOCK } from '../config';
-import { mock } from './mock';
 
 const ADMIN_KEY = 'gallery:admin-code';
 
@@ -43,9 +41,9 @@ const qs = (o: Record<string, string | number | null | undefined>) => {
 
 /** URL ảnh. Nếu sau này bật public bucket/domain riêng, chỉ cần đổi hàm này. */
 export const imageUrl = (id: string, variant: Variant) =>
-  USE_MOCK ? mock.imageUrl(id, variant) : `/img/${id}/${variant}`;
+  `/img/${id}/${variant}`;
 export const downloadUrl = (id: string) =>
-  USE_MOCK ? mock.imageUrl(id, 'original') : `/api/photos/${id}/download`;
+  `/api/photos/${id}/download`;
 
 const HERO_KEY = 'gallery:hero-v';
 /** Ảnh bìa trang chủ; `v` đổi khi quản trị viên đặt ảnh bìa mới để bỏ cache của chính trình duyệt đó. */
@@ -75,8 +73,6 @@ const realApi = {
       (o.albumId ? `/api/albums/${o.albumId}/photos` : '/api/photos') +
         qs({ cursor: o.cursor, limit: o.limit }),
     ),
-  createPhoto: (albumId: string, input: CreatePhotoInput) =>
-    request<Photo>(`/api/albums/${albumId}/photos`, { method: 'POST', json: input }),
   createPhotos: (albumId: string, items: CreatePhotoInput[]) =>
     request<Photo[]>(`/api/albums/${albumId}/photos/batch`, { method: 'POST', json: { items } }),
   updatePhoto: (id: string, patch: { story?: string; meta?: string }) =>
@@ -86,11 +82,11 @@ const realApi = {
   getStorage: () => request<Storage>('/api/storage'),
 };
 
-/** Mọi nơi trong UI dùng `api` này; USE_MOCK=true thì chạy bằng dữ liệu giả (src/lib/mock.ts). */
-export const api: typeof realApi = USE_MOCK ? mock : realApi;
+/** Mọi nơi trong UI dùng `api` này. */
+export const api = realApi;
 
 /** Upload một biến thể (stream body) bằng XHR để có tiến trình theo byte. */
-function realUploadVariant(
+export function uploadVariant(
   photoId: string, variant: Variant, blob: Blob,
   opts: { signal?: AbortSignal; onProgress?: (loaded: number) => void } = {},
 ): Promise<void> {
@@ -112,4 +108,3 @@ function realUploadVariant(
   });
 }
 
-export const uploadVariant: typeof realUploadVariant = USE_MOCK ? mock.uploadVariant : realUploadVariant;

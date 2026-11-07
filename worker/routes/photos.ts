@@ -43,21 +43,6 @@ photos.get('/photos', async (c) => {
 photos.get('/albums/:id/photos', async (c) =>
   c.json(await page(c.env.DB, 'AND album_id = ?', [c.req.param('id')], num(c.req.query('cursor')), Number(c.req.query('limit')))));
 
-photos.post('/albums/:id/photos', async (c) => {
-  const albumId = c.req.param('id');
-  const exists = await c.env.DB.prepare('SELECT 1 AS x FROM albums WHERE id = ?').bind(albumId).first();
-  if (!exists) return c.json({ error: 'Không tìm thấy album.' }, 404);
-  const b = await c.req.json<CreatePhotoInput>().catch(() => null);
-  if (!b || !b.name || !(b.size > 0) || !b.mime) return c.json({ error: 'Dữ liệu ảnh không hợp lệ.' }, 400);
-  const id = newId();
-  await c.env.DB.prepare(
-    `INSERT INTO photos (id, album_id, name, size, width, height, mime, position, created_at)
-     VALUES (?, ?, ?, ?, ?, ?, ?, (SELECT COALESCE(MAX(position), 0) + 1 FROM photos), ?)`,
-  ).bind(id, albumId, b.name, b.size, b.width, b.height, b.mime, Date.now()).run();
-  const row = await c.env.DB.prepare('SELECT * FROM photos WHERE id = ?').bind(id).first<PhotoRow>();
-  return c.json(toPhoto(row!), 201);
-});
-
 /** Tạo nhiều bản ghi ảnh trong một lần gọi (một D1 batch) để upload nhiều ảnh bớt request. */
 photos.post('/albums/:id/photos/batch', async (c) => {
   const albumId = c.req.param('id');

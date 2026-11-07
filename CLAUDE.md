@@ -28,8 +28,8 @@ Secret: `npx wrangler secret put ADMIN_CODE` (cục bộ: tự tạo file `.dev.
 ## Quy ước bắt buộc
 1. **Mọi gọi API từ UI đi qua `src/lib/api.ts`** (hook trong `src/hooks/`). Component không gọi `fetch` trực tiếp.
 2. **Kiểu dữ liệu dùng chung nằm ở `shared/types.ts`**, cả web và worker import từ đó.
-3. **Worker CPU ≤ 10ms/request** (free tier): không xử lý ảnh, không nén ZIP, không parse body lớn ở server.
-   Resize ảnh và nén ZIP làm ở trình duyệt.
+3. **Worker CPU ≤ 10ms/request** (free tier): không xử lý ảnh, không parse body lớn ở server.
+   Resize ảnh làm ở trình duyệt.
 4. **File không đi qua bộ nhớ Worker**: upload stream thẳng `request.body` → `R2.put`.
 5. Route ghi (POST/PUT/PATCH/DELETE) phải qua middleware `requireAdmin` (header `X-Admin-Code`).
 6. Ảnh phục vụ qua `/img/:key` với `Cache-Control: public, max-age=31536000, immutable`; key bất biến (có id) nên không bao giờ ghi đè.
@@ -42,7 +42,7 @@ Secret: `npx wrangler secret put ADMIN_CODE` (cục bộ: tự tạo file `.dev.
 ```
 src/        React app          worker/   Hono API (index.ts, routes/, auth.ts)
 shared/     types dùng chung   docs/     tài liệu kiến trúc
-schema.sql  tạo bảng D1        legacy/   prototype HTML cũ (chỉ tham khảo, sẽ xoá)
+schema.sql  tạo bảng D1
 ```
 
 ## Việc đã quyết định

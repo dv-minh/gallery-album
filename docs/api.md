@@ -12,7 +12,6 @@ Tiền tố `/api`. Ghi (POST/PUT/PATCH/DELETE) cần header `X-Admin-Code`. L�
 | `DELETE /api/albums/:id` | admin | Xoá album + toàn bộ ảnh (R2 + D1) |
 | `GET /api/albums/:id/photos?cursor=&limit=` | — | `PhotoPage` (limit mặc định 30) |
 | `GET /api/photos?cursor=&limit=` | — | Ảnh toàn site (cho tab "Tất cả") |
-| `POST /api/albums/:id/photos` | admin | `{name,size,mime,width,height}` → Photo (status `pending`) |
 | `POST /api/albums/:id/photos/batch` | admin | `{items: [{name,size,mime,width,height}]}` (1–50) → Photo[] (một D1 batch; UI dùng cái này khi upload nhiều ảnh) |
 | `PUT /api/photos/:id/file/:variant` | admin | Body là file (stream). `variant` ∈ `thumb\|medium\|original`. Khi đủ 3 → `ready` |
 | `PATCH /api/photos/:id` | admin | `{story?, meta?}` |

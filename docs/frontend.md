@@ -18,13 +18,13 @@ components/
   admin/    StoragePanel, AlbumRow, UploadZone, UploadQueue
   ui/       Dialog, Toast, ConfirmDialog, PromptDialog, Icon, Button
 hooks/      useAlbums, usePhotos (infinite), useStorage, useAdminAuth, useUploadQueue
-lib/        api.ts (client duy nhất), image.ts (resize canvas), zip.ts (fflate), format.ts
+lib/        api.ts (client duy nhất), image.ts (resize canvas), format.ts
 ```
 
 ## Data layer
 - `lib/api.ts`: `request()` bọc fetch (JSON, lỗi chuẩn hoá, gắn `X-Admin-Code`), các hàm theo resource, `imageUrl(id, variant)`.
 - TanStack Query: key `['albums']`, `['photos', {albumId}]`, `['storage']`.
-  Yêu thích dùng optimistic update. Sau upload/xoá: invalidate `photos`, `albums`, `storage`.
+  Sau upload/xoá: invalidate `photos`, `albums`, `storage`.
 
 ## Upload (useUploadQueue)
 Mỗi file: `createImageBitmap` → canvas → blob `thumb` (400px, webp 0.8) + `medium` (1600px, webp 0.85) →

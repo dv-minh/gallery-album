@@ -51,7 +51,7 @@ export default function ShowcasePage() {
       <section onClick={scrollToGallery} className="relative w-full cursor-pointer overflow-hidden bg-surface-container-low">
         <div className="relative flex min-h-[90vh] items-center justify-center">
           {/* Chỉ một ảnh bìa, không có ảnh thay thế: nền trung tính, ảnh hiện dần khi tải xong (tránh nháy sang ảnh khác khi F5). */}
-          <img src={couple.heroImage ?? heroUrl()} alt="" fetchPriority="high" decoding="async"
+          <img src={heroUrl()} alt="" fetchPriority="high" decoding="async"
             ref={(el) => { if (el?.complete && el.naturalWidth) setHeroOk(true); }}
             onLoad={() => setHeroOk(true)}
             className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-700 ${heroOk ? 'opacity-100' : 'opacity-0'}`}

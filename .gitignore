@@ -3,6 +3,5 @@ dist/
 .wrangler/
 .dev.vars
 *.log
-# Ảnh cá nhân dùng test UI (giữ lại README)
-src/assets/dummy/*
-!src/assets/dummy/README.md
+# Ảnh cá nhân để ngoài git
+src/assets/dummy/
