@@ -23,7 +23,7 @@ npm run typecheck        # tsc cho web + worker
 npm run build            # build web → dist/
 npm run deploy           # build + wrangler deploy
 ```
-Secret: `npx wrangler secret put ADMIN_CODE` (cục bộ: file `.dev.vars`, không commit).
+Secret: `npx wrangler secret put ADMIN_CODE` (cục bộ: tự tạo file `.dev.vars` gồm một dòng `ADMIN_CODE=<mã của bạn>`, không commit).
 
 ## Quy ước bắt buộc
 1. **Mọi gọi API từ UI đi qua `src/lib/api.ts`** (hook trong `src/hooks/`). Component không gọi `fetch` trực tiếp.
