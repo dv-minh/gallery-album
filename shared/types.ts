@@ -22,7 +22,6 @@ export interface Photo {
   mime: string;
   story: string;
   meta: string;
-  favorite: boolean;
   position: number;
   createdAt: number;
 }

@@ -1,2 +1,3 @@
-# Sao chép thành .dev.vars (không commit) để chạy wrangler dev cục bộ
-ADMIN_CODE=886924
+# Sao chép thành .dev.vars (không commit) để chạy wrangler dev cục bộ.
+# Đặt giá trị riêng, KHÔNG dùng lại mã của bản deploy thật.
+ADMIN_CODE=change-me-local-only

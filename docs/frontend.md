@@ -23,7 +23,7 @@ lib/        api.ts (client duy nhất), image.ts (resize canvas), zip.ts (fflate
 
 ## Data layer
 - `lib/api.ts`: `request()` bọc fetch (JSON, lỗi chuẩn hoá, gắn `X-Admin-Code`), các hàm theo resource, `imageUrl(id, variant)`.
-- TanStack Query: key `['albums']`, `['photos', {albumId, favorite}]`, `['storage']`.
+- TanStack Query: key `['albums']`, `['photos', {albumId}]`, `['storage']`.
   Yêu thích dùng optimistic update. Sau upload/xoá: invalidate `photos`, `albums`, `storage`.
 
 ## Upload (useUploadQueue)

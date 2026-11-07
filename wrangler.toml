@@ -11,8 +11,7 @@ run_worker_first = ["/api/*", "/img/*"]
 [[d1_databases]]
 binding = "DB"
 database_name = "gallery"
-# Sau khi chạy `npx wrangler d1 create gallery`, thay bằng database_id thật.
-database_id = "00000000-0000-0000-0000-000000000000"
+database_id = "2a2aea86-c918-42dc-8c15-48e88fca1f26"
 
 [[r2_buckets]]
 binding = "BUCKET"

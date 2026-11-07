@@ -17,11 +17,11 @@ export async function deletePhotoObjects(bucket: R2Bucket, ids: string[]) {
 
 interface PhotoRow {
   id: string; album_id: string; name: string; size: number; width: number | null; height: number | null;
-  mime: string; story: string; meta: string; favorite: number; position: number; created_at: number;
+  mime: string; story: string; meta: string; position: number; created_at: number;
 }
 const toPhoto = (r: PhotoRow): Photo => ({
   id: r.id, albumId: r.album_id, name: r.name, size: r.size, width: r.width, height: r.height, mime: r.mime,
-  story: r.story, meta: r.meta, favorite: r.favorite === 1, position: r.position, createdAt: r.created_at,
+  story: r.story, meta: r.meta, position: r.position, createdAt: r.created_at,
 });
 
 async function page(db: D1Database, where: string, binds: unknown[], cursor: number | null, limit: number): Promise<PhotoPage> {
@@ -37,8 +37,7 @@ async function page(db: D1Database, where: string, binds: unknown[], cursor: num
 const num = (v: string | undefined) => (v !== undefined && v !== '' && !Number.isNaN(Number(v)) ? Number(v) : null);
 
 photos.get('/photos', async (c) => {
-  const fav = c.req.query('favorite') === '1';
-  return c.json(await page(c.env.DB, fav ? 'AND favorite = 1' : '', [], num(c.req.query('cursor')), Number(c.req.query('limit'))));
+  return c.json(await page(c.env.DB, '', [], num(c.req.query('cursor')), Number(c.req.query('limit'))));
 });
 
 photos.get('/albums/:id/photos', async (c) =>
@@ -57,6 +56,29 @@ photos.post('/albums/:id/photos', async (c) => {
   ).bind(id, albumId, b.name, b.size, b.width, b.height, b.mime, Date.now()).run();
   const row = await c.env.DB.prepare('SELECT * FROM photos WHERE id = ?').bind(id).first<PhotoRow>();
   return c.json(toPhoto(row!), 201);
+});
+
+/** Tạo nhiều bản ghi ảnh trong một lần gọi (một D1 batch) để upload nhiều ảnh bớt request. */
+photos.post('/albums/:id/photos/batch', async (c) => {
+  const albumId = c.req.param('id');
+  const exists = await c.env.DB.prepare('SELECT 1 AS x FROM albums WHERE id = ?').bind(albumId).first();
+  if (!exists) return c.json({ error: 'Không tìm thấy album.' }, 404);
+  const body = await c.req.json<{ items?: CreatePhotoInput[] }>().catch(() => null);
+  const items = body?.items;
+  if (!Array.isArray(items) || !items.length || items.length > 50) return c.json({ error: 'Cần 1–50 ảnh mỗi lần.' }, 400);
+  if (items.some((b) => !b || !b.name || !(b.size > 0) || !b.mime)) return c.json({ error: 'Dữ liệu ảnh không hợp lệ.' }, 400);
+
+  const base = (await c.env.DB.prepare('SELECT COALESCE(MAX(position), 0) AS m FROM photos').first<{ m: number }>())?.m ?? 0;
+  const now = Date.now();
+  const ids = items.map(() => newId());
+  await c.env.DB.batch(items.map((b, i) => c.env.DB.prepare(
+    `INSERT INTO photos (id, album_id, name, size, width, height, mime, position, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+  ).bind(ids[i], albumId, b.name, b.size, b.width, b.height, b.mime, base + i + 1, now)));
+  const out: Photo[] = items.map((b, i) => ({
+    id: ids[i], albumId, name: b.name, size: b.size, width: b.width, height: b.height, mime: b.mime,
+    story: '', meta: '', position: base + i + 1, createdAt: now,
+  }));
+  return c.json(out, 201);
 });
 
 photos.put('/photos/:id/file/:variant', async (c) => {
@@ -83,14 +105,6 @@ photos.patch('/photos/:id', async (c) => {
   ).bind(b.story ?? null, b.meta ?? null, c.req.param('id')).run();
   if (!res.meta.changes) return c.json({ error: 'Không tìm thấy ảnh.' }, 404);
   return c.body(null, 204);
-});
-
-photos.post('/photos/:id/favorite', async (c) => {
-  const id = c.req.param('id');
-  const row = await c.env.DB.prepare('UPDATE photos SET favorite = 1 - favorite WHERE id = ? RETURNING favorite')
-    .bind(id).first<{ favorite: number }>();
-  if (!row) return c.json({ error: 'Không tìm thấy ảnh.' }, 404);
-  return c.json({ favorite: row.favorite === 1 });
 });
 
 photos.delete('/photos/:id', async (c) => {

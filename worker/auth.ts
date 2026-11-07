@@ -12,13 +12,9 @@ async function safeEqual(a: string, b: string): Promise<boolean> {
   return (crypto.subtle as SubtleCrypto & { timingSafeEqual(a: ArrayBuffer, b: ArrayBuffer): boolean }).timingSafeEqual(ha, hb);
 }
 
-/** Các route ghi công khai (không cần code quản trị). */
-const PUBLIC_WRITES = [/^\/api\/photos\/[^/]+\/favorite$/];
-
 export const requireAdmin: MiddlewareHandler<AppEnv> = async (c, next) => {
   const m = c.req.method;
   if (m === 'GET' || m === 'HEAD' || m === 'OPTIONS') return next();
-  if (PUBLIC_WRITES.some((re) => re.test(c.req.path))) return next();
 
   const code = c.req.header('x-admin-code') ?? '';
   if (!c.env.ADMIN_CODE || !(await safeEqual(code, c.env.ADMIN_CODE))) {

@@ -3,6 +3,8 @@
  * Hợp đồng endpoint: docs/api.md.
  */
 import type { Album, CreatePhotoInput, Photo, PhotoPage, Storage, Variant } from '../../shared/types';
+import { USE_MOCK } from '../config';
+import { mock } from './mock';
 
 const ADMIN_KEY = 'gallery:admin-code';
 
@@ -40,10 +42,25 @@ const qs = (o: Record<string, string | number | null | undefined>) => {
 };
 
 /** URL ảnh. Nếu sau này bật public bucket/domain riêng, chỉ cần đổi hàm này. */
-export const imageUrl = (id: string, variant: Variant) => `/img/${id}/${variant}`;
-export const downloadUrl = (id: string) => `/api/photos/${id}/download`;
+export const imageUrl = (id: string, variant: Variant) =>
+  USE_MOCK ? mock.imageUrl(id, variant) : `/img/${id}/${variant}`;
+export const downloadUrl = (id: string) =>
+  USE_MOCK ? mock.imageUrl(id, 'original') : `/api/photos/${id}/download`;
 
-export const api = {
+const HERO_KEY = 'gallery:hero-v';
+/** Ảnh bìa trang chủ; `v` đổi khi quản trị viên đặt ảnh bìa mới để bỏ cache của chính trình duyệt đó. */
+export const heroUrl = () => {
+  let v = '';
+  try { v = localStorage.getItem(HERO_KEY) ?? ''; } catch { /* bỏ qua */ }
+  return `/img/hero${v ? `?v=${v}` : ''}`;
+};
+
+const realApi = {
+  /** Tải ảnh bìa trang chủ (blob WebP đã resize ở trình duyệt). */
+  uploadHero: async (blob: Blob) => {
+    await request<void>('/api/site/hero', { method: 'PUT', body: blob });
+    try { localStorage.setItem(HERO_KEY, String(Date.now())); } catch { /* bỏ qua */ }
+  },
   verify: (code: string) =>
     request<void>('/api/verify', { method: 'POST', headers: { 'x-admin-code': code } }),
 
@@ -53,23 +70,27 @@ export const api = {
   moveAlbum: (id: string, direction: -1 | 1) => request<void>(`/api/albums/${id}/move`, { method: 'POST', json: { direction } }),
   deleteAlbum: (id: string) => request<void>(`/api/albums/${id}`, { method: 'DELETE' }),
 
-  listPhotos: (o: { albumId?: string; favorite?: boolean; cursor?: number | null; limit?: number }) =>
+  listPhotos: (o: { albumId?: string; cursor?: number | null; limit?: number }) =>
     request<PhotoPage>(
       (o.albumId ? `/api/albums/${o.albumId}/photos` : '/api/photos') +
-        qs({ favorite: o.favorite ? 1 : undefined, cursor: o.cursor, limit: o.limit }),
+        qs({ cursor: o.cursor, limit: o.limit }),
     ),
   createPhoto: (albumId: string, input: CreatePhotoInput) =>
     request<Photo>(`/api/albums/${albumId}/photos`, { method: 'POST', json: input }),
+  createPhotos: (albumId: string, items: CreatePhotoInput[]) =>
+    request<Photo[]>(`/api/albums/${albumId}/photos/batch`, { method: 'POST', json: { items } }),
   updatePhoto: (id: string, patch: { story?: string; meta?: string }) =>
     request<void>(`/api/photos/${id}`, { method: 'PATCH', json: patch }),
-  toggleFavorite: (id: string) => request<{ favorite: boolean }>(`/api/photos/${id}/favorite`, { method: 'POST' }),
   deletePhoto: (id: string) => request<void>(`/api/photos/${id}`, { method: 'DELETE' }),
 
   getStorage: () => request<Storage>('/api/storage'),
 };
 
+/** Mọi nơi trong UI dùng `api` này; USE_MOCK=true thì chạy bằng dữ liệu giả (src/lib/mock.ts). */
+export const api: typeof realApi = USE_MOCK ? mock : realApi;
+
 /** Upload một biến thể (stream body) bằng XHR để có tiến trình theo byte. */
-export function uploadVariant(
+function realUploadVariant(
   photoId: string, variant: Variant, blob: Blob,
   opts: { signal?: AbortSignal; onProgress?: (loaded: number) => void } = {},
 ): Promise<void> {
@@ -90,3 +111,5 @@ export function uploadVariant(
     xhr.send(blob);
   });
 }
+
+export const uploadVariant: typeof realUploadVariant = USE_MOCK ? mock.uploadVariant : realUploadVariant;

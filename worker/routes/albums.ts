@@ -17,7 +17,7 @@ albums.get('/', async (c) => {
   const { results } = await c.env.DB.prepare(
     `SELECT a.id, a.name, a.description, a.position,
        (SELECT COUNT(*) FROM photos p WHERE p.album_id = a.id AND p.status = 'ready') AS photoCount,
-       (SELECT id FROM photos p WHERE p.album_id = a.id AND p.status = 'ready' ORDER BY position LIMIT 1) AS coverPhotoId
+       (SELECT id FROM photos p WHERE p.album_id = a.id AND p.status = 'ready' ORDER BY (p.width > p.height) DESC, position LIMIT 1) AS coverPhotoId
      FROM albums a ORDER BY a.position`,
   ).all<AlbumRow>();
   return c.json(results.map(toAlbum));

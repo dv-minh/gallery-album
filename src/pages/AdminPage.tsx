@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from 'react';
 import { Link } from 'react-router-dom';
+import { HeroPanel } from '../components/admin/HeroPanel';
 import { StoragePanel } from '../components/admin/StoragePanel';
 import { AdminHeader } from '../components/layout/Headers';
 import { useFeedback } from '../components/ui/Feedback';
@@ -38,6 +39,8 @@ export default function AdminPage() {
         </div>
 
         <StoragePanel />
+
+        <HeroPanel />
 
         <section className="rounded-xl border border-outline-variant/40 bg-white p-space-lg shadow-sm">
           <div className="flex flex-col justify-between gap-space-md border-b border-surface-container-high pb-space-md sm:flex-row sm:items-center">

@@ -26,3 +26,9 @@ CREATE TABLE IF NOT EXISTS photos (
 
 CREATE INDEX IF NOT EXISTS idx_photos_album ON photos(album_id, position);
 CREATE INDEX IF NOT EXISTS idx_photos_pos ON photos(position);
+
+-- Cài đặt site (vd: key = hero → id ảnh bìa). Thêm sau lần tạo bảng đầu; CREATE IF NOT EXISTS nên chạy lại an toàn.
+CREATE TABLE IF NOT EXISTS settings (
+  key   TEXT PRIMARY KEY,
+  value TEXT NOT NULL
+);
